@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+transformers
+torch
+google-generativeai
+pydantic
+httpx
+python-multipart
+alembic
+aiosqlite
+psycopg2-binary
