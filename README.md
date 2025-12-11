@@ -110,20 +110,33 @@ TUGAS3/
 
 ---
 
-## 🖼️ Asset Dokumentasi
+## 🖼️ Screenshot Aplikasi
 
-Proyek ini menggunakan berbagai asset gambar untuk dokumentasi dan elemen visual. Semua asset berada di folder `frontend/src/assets/`.
+Berikut adalah tampilan aplikasi **Product Review Analyzer**:
 
-### Screenshot Aplikasi
+### Desktop View
 
-| Nama File | Ukuran | Deskripsi |
-|-----------|--------|-----------|
-| **landing page.png** | 787 KB | Screenshot halaman utama (Landing Page) aplikasi dalam tampilan desktop. Menampilkan hero section dengan judul, deskripsi fitur, dan form analisis review. UI menggunakan tema dark dengan efek glassmorphism dan gradien ungu-biru yang modern. |
-| **Analyze review Form.png** | 748 KB | Screenshot detail dari form analisis review pada desktop view. Menampilkan textarea untuk input review, input nama produk, dan tombol "Analyze Review" dengan desain glassmorphism yang premium. |
-| **Analysis History.png** | 545 KB | Screenshot section "Analysis History" yang menampilkan grid cards berisi riwayat review yang telah dianalisis. Setiap card menunjukkan sentiment badge (positive/negative/neutral), product name, review text, key points, confidence score, dan action buttons (Copy, Edit, Delete). |
-| **mobile landing.PNG** | 259 KB | Screenshot tampilan mobile (responsive) dari landing page. Menunjukkan bahwa aplikasi fully responsive dengan layout yang dioptimalkan untuk perangkat mobile/smartphone. |
-| **analyze review mobile.PNG** | 151 KB | Screenshot form analisis review dalam tampilan mobile. Elemen-elemen UI tetap mudah digunakan dan aesthetic meskipun di layar kecil. |
-| **Footer mobile.PNG** | 84 KB | Screenshot footer aplikasi dalam tampilan mobile, menampilkan informasi copyright dan social media links (GitHub, LinkedIn, Instagram) yang tetap accessible di perangkat mobile. |
+#### Landing Page
+![Landing Page](screenshots/landing%20page.png)
+*Halaman utama aplikasi dengan hero section, deskripsi fitur, dan form analisis review. UI menggunakan tema dark dengan efek glassmorphism dan gradien ungu-biru yang modern.*
+
+#### Form Analisis Review
+![Analyze Review Form](screenshots/Analyze%20review%20Form.png)
+*Detail form analisis review dengan textarea untuk input review, input nama produk, dan tombol "Analyze Review" dengan desain glassmorphism yang premium.*
+
+#### Analysis History
+![Analysis History](screenshots/Analysis%20History.png)
+*Section "Analysis History" menampilkan grid cards berisi riwayat review yang telah dianalisis. Setiap card menunjukkan sentiment badge (positive/negative/neutral), product name, review text, key points, confidence score, dan action buttons (Copy, Edit, Delete).*
+
+### Mobile View (Responsive)
+
+<div align="center">
+  <img src="screenshots/mobile%20landing.PNG" width="300" alt="Mobile Landing Page">
+  <img src="screenshots/analyze%20review%20mobile.PNG" width="300" alt="Mobile Review Form">
+  <img src="screenshots/Footer%20mobile.PNG" width="300" alt="Mobile Footer">
+</div>
+
+*Aplikasi fully responsive dengan layout yang dioptimalkan untuk perangkat mobile/smartphone.*
 
 ### Asset Fungsional
 
@@ -132,10 +145,10 @@ Proyek ini menggunakan berbagai asset gambar untuk dokumentasi dan elemen visual
 | **favicon.png** | 4.4 KB | Icon aplikasi yang muncul di tab browser. Berupa logo atau simbol representatif dari Product Review Analyzer. File ini di-link di `index.html` sebagai favicon untuk branding aplikasi. |
 | **loading.jpg** | 34 KB | Gambar loading/placeholder yang ditampilkan saat proses analisis sedang berjalan. Memberikan feedback visual kepada user bahwa sistem sedang memproses request mereka. |
 
-### Catatan Penggunaan
+### Catatan
 - Semua screenshot menggunakan **tema dark mode** dengan **glassmorphism effect** untuk konsistensi visual.
 - Asset gambar di-import dan digunakan oleh komponen React (misalnya di `App.jsx` atau komponen lainnya).
-- File-file ini **tidak di-commit** ke repository jika ukurannya terlalu besar, sesuai dengan best practice untuk asset statis.
+- Screenshot disimpan di folder `screenshots/` untuk dokumentasi.
 
 ---
 
