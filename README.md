@@ -1,5 +1,13 @@
 # 🌟 Product Review Analyzer AI
 
+## 👨‍💻 Kontributor
+
+Nama  :Febrian Valentino Nugroho
+NIM   :123140034
+Kelas :RA
+
+Teknologi: React, FastAPI, PostgreSQL, Google Gemini AI.
+
 <div align="center">
 
 ![Product Review Analyzer](https://img.shields.io/badge/Product%20Review-Analyzer-00d4ff?style=for-the-badge&logo=sparkles)
@@ -290,7 +298,4 @@ Aplikasi ini menyediakan REST API yang bisa diuji langsung via Swagger UI di `ht
 
 ---
 
-## 👨‍💻 Kontributor
 
-Dibuat sebagai bagian dari tugas pengembangan perangkat lunak berbasis AI.
-Teknologi: React, FastAPI, PostgreSQL, Google Gemini AI.
