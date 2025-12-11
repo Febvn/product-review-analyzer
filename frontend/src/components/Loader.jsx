@@ -6,20 +6,23 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Loader = () => {
-    return (
-        <StyledWrapper>
-            <div className="cube-loader">
-                <div className="cube-top" />
-                <div className="cube-wrapper">
-                    <span style={{ "--i": 0 }} className="cube-span" />
-                    <span style={{ "--i": 1 }} className="cube-span" />
-                    <span style={{ "--i": 2 }} className="cube-span" />
-                    <span style={{ "--i": 3 }} className="cube-span" />
-                </div>
-            </div>
-            <p className="loading-text">Analyzing your review...</p>
-        </StyledWrapper>
-    );
+  return (
+    <StyledWrapper>
+      {/* 3D Cube Loader Container */}
+      <div className="cube-loader">
+        <div className="cube-top" />
+        <div className="cube-wrapper">
+          {/* 4 Sisi Kubus dibuat dengan span dan variabel CSS index (--i) */}
+          <span style={{ "--i": 0 }} className="cube-span" />
+          <span style={{ "--i": 1 }} className="cube-span" />
+          <span style={{ "--i": 2 }} className="cube-span" />
+          <span style={{ "--i": 3 }} className="cube-span" />
+        </div>
+      </div>
+      {/* Teks Animasi Pulse */}
+      <p className="loading-text">Analyzing your review...</p>
+    </StyledWrapper>
+  );
 }
 
 const StyledWrapper = styled.div`

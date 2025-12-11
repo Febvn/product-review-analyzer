@@ -13,10 +13,13 @@ import {
   Package,
   Sparkles,
   AlertCircle,
-  Trash2
+  X,
+  Copy,
+  Edit2
 } from 'lucide-react';
 
-const ReviewCard = ({ review, onDelete }) => {
+const ReviewCard = ({ review, onDelete, onEdit }) => {
+  // Destructuring properties dari objek review
   const {
     id,
     review_text,
@@ -29,6 +32,21 @@ const ReviewCard = ({ review, onDelete }) => {
     error_message
   } = review;
 
+  /**
+   * Handler untuk menyalin teks review.
+   * Menggunakan e.stopPropagation() untuk mencegah event bubbling
+   * (agar tidak memicu onClick pada parent element jika ada).
+   */
+  const handleCopy = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(review_text);
+    // Tampilkan alert sederhana (bisa diganti Toast di implementasi real)
+    alert("Review text copied!");
+  };
+
+  /**
+   * Helper untuk mendapatkan icon yang sesuai dengan sentimen.
+   */
   const getSentimentIcon = () => {
     switch (sentiment) {
       case 'positive':
@@ -40,6 +58,9 @@ const ReviewCard = ({ review, onDelete }) => {
     }
   };
 
+  /**
+   * Helper untuk label teks sentimen.
+   */
   const getSentimentLabel = () => {
     switch (sentiment) {
       case 'positive':
@@ -51,6 +72,10 @@ const ReviewCard = ({ review, onDelete }) => {
     }
   };
 
+  /**
+   * Helper formatting tanggal agar mudah dibaca.
+   * Format: Dec 8, 2024, 05:00 PM
+   */
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -62,6 +87,9 @@ const ReviewCard = ({ review, onDelete }) => {
     });
   };
 
+  /**
+   * Memotong teks jika terlalu panjang agar card tidak terlalu tinggi.
+   */
   const truncateText = (text, maxLength = 200) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
@@ -69,11 +97,28 @@ const ReviewCard = ({ review, onDelete }) => {
   };
 
   return (
+    // StyledWrapper menerima prop sentimen untuk border gradient yang sesuai
     <StyledWrapper $sentiment={sentiment}>
       <div className="card">
+        {/* Dekorasi Border */}
         <div className="card__border" />
 
-        {/* Header */}
+        {/* Tombol Delete (Pojok Kanan Atas) */}
+        <button
+          className="delete_button_top"
+          onClick={(e) => {
+            e.stopPropagation(); // Mencegah klik tembus ke card
+            // Konfirmasi sebelum menghapus
+            if (window.confirm('Are you sure you want to delete this review?')) {
+              onDelete(id);
+            }
+          }}
+          title="Delete Review"
+        >
+          <X size={16} />
+        </button>
+
+        {/* Header: Judul (ID Review) dan Badge Produk */}
         <div className="card_title__container">
           <div className="card_header">
             <span className="card_title">Review #{id}</span>
@@ -84,12 +129,13 @@ const ReviewCard = ({ review, onDelete }) => {
               </span>
             )}
           </div>
+          {/* Teks review yang dipotong */}
           <p className="card_paragraph">{truncateText(review_text)}</p>
         </div>
 
         <hr className="line" />
 
-        {/* Sentiment Badge */}
+        {/* Badge Sentimen (Warna sesuai hasil analisis) */}
         {sentiment && (
           <div className="sentiment_section">
             <span className={`sentiment_badge sentiment_${sentiment}`}>
@@ -102,7 +148,7 @@ const ReviewCard = ({ review, onDelete }) => {
           </div>
         )}
 
-        {/* Key Points */}
+        {/* Bagian Key Points (Maksimal 5 poin ditampilkan) */}
         {key_points && key_points.length > 0 && (
           <>
             <div className="key_points_header">
@@ -122,7 +168,7 @@ const ReviewCard = ({ review, onDelete }) => {
           </>
         )}
 
-        {/* Error Message */}
+        {/* Tampilan Pesan Error (jika ada) */}
         {error_message && (
           <div className="error_message">
             <AlertCircle size={14} />
@@ -130,7 +176,7 @@ const ReviewCard = ({ review, onDelete }) => {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Footer: Status, Tanggal, dan Tombol Aksi (Edit/Copy) */}
         <div className="card_footer">
           <div className="status_container">
             <span className={`status status_${analysis_status}`}>
@@ -142,14 +188,27 @@ const ReviewCard = ({ review, onDelete }) => {
             </span>
           </div>
 
-          <button className="delete_button" onClick={(e) => {
-            e.stopPropagation();
-            if (window.confirm('Are you sure you want to delete this review?')) {
-              onDelete(id);
-            }
-          }}>
-            <Trash2 size={14} />
-          </button>
+          <div className="actions_container">
+            {/* Tombol Edit */}
+            <button
+              className="action_button edit_button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(review);
+              }}
+              title="Edit Review"
+            >
+              <Edit2 size={14} />
+            </button>
+            {/* Tombol Copy */}
+            <button
+              className="action_button copy_button"
+              onClick={handleCopy}
+              title="Copy Review Text"
+            >
+              <Copy size={14} />
+            </button>
+          </div>
         </div>
       </div>
     </StyledWrapper>
@@ -425,24 +484,74 @@ const StyledWrapper = styled.div`
     color: var(--paragraph);
   }
 
-  .delete_button {
+  .actions_container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .action_button {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 28px;
     height: 28px;
     border-radius: 6px;
-    border: 1px solid hsla(0, 72%, 51%, 0.3);
-    background: hsla(0, 72%, 51%, 0.1);
-    color: var(--negative);
     cursor: pointer;
     transition: all 0.2s ease;
+    border: 1px solid transparent;
   }
 
-  .delete_button:hover {
-    background: var(--negative);
+  /* Edit Button - Yellow */
+  .edit_button {
+    background: hsla(48, 100%, 50%, 0.1);
+    border-color: hsla(48, 100%, 50%, 0.3);
+    color: hsl(48, 100%, 50%);
+  }
+
+  .edit_button:hover {
+    background: hsl(48, 100%, 50%);
+    color: var(--black);
+    transform: scale(1.05);
+  }
+
+  /* Copy Button - Green */
+  .copy_button {
+    background: hsla(142, 76%, 46%, 0.1);
+    border-color: hsla(142, 76%, 46%, 0.3);
+    color: hsl(142, 76%, 46%);
+  }
+
+  .copy_button:hover {
+    background: hsl(142, 76%, 46%);
     color: white;
     transform: scale(1.05);
+  }
+
+  /* Delete Button - Red (Top Right) */
+  .delete_button_top {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--paragraph);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 999;
+    pointer-events: auto;
+  }
+
+  .delete_button_top:hover {
+    background: hsla(0, 72%, 51%, 0.15);
+    color: var(--negative);
+    transform: scale(1.1);
   }
 `;
 

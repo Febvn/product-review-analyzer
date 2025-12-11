@@ -14,13 +14,15 @@ import {
 import ReviewCard from './ReviewCard';
 
 const ReviewList = ({
-  reviews,
-  loading,
-  onRefresh,
-  selectedFilter,
-  onFilterChange,
-  onDeleteReview
+  reviews,          // Array data ulasan
+  loading,          // Status loading saat refresh/fetch
+  onRefresh,        // Fungsi untuk refresh data manual
+  selectedFilter,   // Filter sentimen yang dipilih saat ini
+  onFilterChange,   // Handler saat filter berubah
+  onDeleteReview,   // Handler hapus review
+  onEditReview      // Handler edit review
 }) => {
+  // Opsi filter yang tersedia untuk dropdown
   const filterOptions = [
     { value: '', label: 'All Reviews' },
     { value: 'positive', label: 'Positive' },
@@ -31,8 +33,10 @@ const ReviewList = ({
   return (
     <StyledWrapper>
       <div className="list_container">
+        {/* Dekorasi border background */}
         <div className="list_border" />
-        {/* Header */}
+
+        {/* Header List: Judul, Jumlah Review, dan Tombol Filter/Refresh */}
         <div className="list_header">
           <div className="header_title">
             <History size={20} />
@@ -41,7 +45,7 @@ const ReviewList = ({
           </div>
 
           <div className="header_actions">
-            {/* Filter Dropdown */}
+            {/* Dropdown Filter Sentimen */}
             <div className="filter_wrapper">
               <Filter size={14} />
               <select
@@ -58,7 +62,7 @@ const ReviewList = ({
               <ChevronDown size={14} className="dropdown_arrow" />
             </div>
 
-            {/* Refresh Button */}
+            {/* Tombol Refresh Manual */}
             <button
               className={`refresh_button ${loading ? 'loading' : ''}`}
               onClick={onRefresh}
@@ -72,29 +76,34 @@ const ReviewList = ({
 
         <hr className="line" />
 
-        {/* Reviews Grid */}
+        {/* Kondisional Rendering untuk Grid Review */}
         {loading && reviews.length === 0 ? (
+          // Tampilan Loading Awal (jika belum ada data)
           <div className="loading_state">
             <div className="spinner" />
             <p>Loading reviews...</p>
           </div>
         ) : reviews.length === 0 ? (
+          // Tampilan Kosong (Empty State) jika tidak ada review
           <div className="empty_state">
             <Inbox size={48} />
             <h3>No reviews yet</h3>
             <p>Analyze your first review to see it here</p>
           </div>
         ) : (
+          // Grid Review (jika ada data)
           <div className="reviews_grid">
             {reviews.map((review, index) => (
               <div
                 key={review.id}
                 className="review_item"
+                // Animasi bertahap (staggered animation) untuk setiap item
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <ReviewCard
                   review={review}
                   onDelete={onDeleteReview}
+                  onEdit={onEditReview}
                 />
               </div>
             ))}

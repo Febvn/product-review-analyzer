@@ -7,37 +7,45 @@ import styled from 'styled-components';
 import { CheckCircle, XCircle, AlertTriangle, X, Info } from 'lucide-react';
 
 const Toast = ({ message, type = 'info', onClose, duration = 5000 }) => {
-    useEffect(() => {
-        if (duration > 0) {
-            const timer = setTimeout(onClose, duration);
-            return () => clearTimeout(timer);
-        }
-    }, [duration, onClose]);
+  /**
+   * Effect hook untuk menghilangkan toast secara otomatis setelah durasi tertentu.
+   * Membersihkan timeout saat komponen unmount untuk mencegah memory leak.
+   */
+  useEffect(() => {
+    if (duration > 0) {
+      const timer = setTimeout(onClose, duration);
+      return () => clearTimeout(timer);
+    }
+  }, [duration, onClose]);
 
-    const getIcon = () => {
-        switch (type) {
-            case 'success':
-                return <CheckCircle size={20} />;
-            case 'error':
-                return <XCircle size={20} />;
-            case 'warning':
-                return <AlertTriangle size={20} />;
-            default:
-                return <Info size={20} />;
-        }
-    };
+  /**
+   * Helper untuk memilih icon berdasarkan tipe toast (success, error, warning, info).
+   */
+  const getIcon = () => {
+    switch (type) {
+      case 'success':
+        return <CheckCircle size={20} />;
+      case 'error':
+        return <XCircle size={20} />;
+      case 'warning':
+        return <AlertTriangle size={20} />;
+      default:
+        return <Info size={20} />;
+    }
+  };
 
-    return (
-        <StyledWrapper $type={type}>
-            <div className="toast">
-                <span className="toast_icon">{getIcon()}</span>
-                <p className="toast_message">{message}</p>
-                <button className="toast_close" onClick={onClose}>
-                    <X size={16} />
-                </button>
-            </div>
-        </StyledWrapper>
-    );
+  return (
+    // StyledWrapper menerima prop $type untuk mengatur warna tema toast
+    <StyledWrapper $type={type}>
+      <div className="toast">
+        <span className="toast_icon">{getIcon()}</span>
+        <p className="toast_message">{message}</p>
+        <button className="toast_close" onClick={onClose}>
+          <X size={16} />
+        </button>
+      </div>
+    </StyledWrapper>
+  );
 };
 
 const StyledWrapper = styled.div`
@@ -70,19 +78,19 @@ const StyledWrapper = styled.div`
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid ${props =>
-        props.$type === 'success' ? 'hsla(142, 76%, 46%, 0.3)' :
-            props.$type === 'error' ? 'hsla(0, 72%, 51%, 0.3)' :
-                props.$type === 'warning' ? 'hsla(45, 93%, 55%, 0.3)' :
-                    'hsla(189, 92%, 58%, 0.3)'
-    };
+    props.$type === 'success' ? 'hsla(142, 76%, 46%, 0.3)' :
+      props.$type === 'error' ? 'hsla(0, 72%, 51%, 0.3)' :
+        props.$type === 'warning' ? 'hsla(45, 93%, 55%, 0.3)' :
+          'hsla(189, 92%, 58%, 0.3)'
+  };
     border-radius: 0.75rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
                 0 0 20px ${props =>
-        props.$type === 'success' ? 'hsla(142, 76%, 46%, 0.15)' :
-            props.$type === 'error' ? 'hsla(0, 72%, 51%, 0.15)' :
-                props.$type === 'warning' ? 'hsla(45, 93%, 55%, 0.15)' :
-                    'hsla(189, 92%, 58%, 0.15)'
-    };
+    props.$type === 'success' ? 'hsla(142, 76%, 46%, 0.15)' :
+      props.$type === 'error' ? 'hsla(0, 72%, 51%, 0.15)' :
+        props.$type === 'warning' ? 'hsla(45, 93%, 55%, 0.15)' :
+          'hsla(189, 92%, 58%, 0.15)'
+  };
   }
 
   .toast_icon {
@@ -91,11 +99,11 @@ const StyledWrapper = styled.div`
     justify-content: center;
     flex-shrink: 0;
     color: ${props =>
-        props.$type === 'success' ? 'hsl(142, 76%, 46%)' :
-            props.$type === 'error' ? 'hsl(0, 72%, 51%)' :
-                props.$type === 'warning' ? 'hsl(45, 93%, 55%)' :
-                    'hsl(189, 92%, 58%)'
-    };
+    props.$type === 'success' ? 'hsl(142, 76%, 46%)' :
+      props.$type === 'error' ? 'hsl(0, 72%, 51%)' :
+        props.$type === 'warning' ? 'hsl(45, 93%, 55%)' :
+          'hsl(189, 92%, 58%)'
+  };
   }
 
   .toast_message {

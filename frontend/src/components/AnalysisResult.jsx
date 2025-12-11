@@ -5,69 +5,82 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-    ThumbsUp,
-    ThumbsDown,
-    Minus,
-    Sparkles,
-    Check,
-    AlertTriangle,
-    Copy,
-    CheckCircle
+  ThumbsUp,
+  ThumbsDown,
+  Minus,
+  Sparkles,
+  Check,
+  AlertTriangle,
+  Copy,
+  CheckCircle
 } from 'lucide-react';
 import { useState } from 'react';
 
 const AnalysisResult = ({ result, onNewAnalysis }) => {
-    const [copied, setCopied] = useState(false);
+  // State untuk menangani status "Copied" pada tombol copy
+  const [copied, setCopied] = useState(false);
 
-    if (!result) return null;
+  // Jika tidak ada hasil (null), jangan render apa-apa
+  if (!result) return null;
 
-    const { data } = result;
-    const {
-        sentiment,
-        sentiment_score,
-        key_points,
-        review_text,
-        product_name,
-        analysis_status,
-        error_message
-    } = data || {};
+  // Destructuring data dari prop `result` untuk memudahkan akses variabel
+  const { data } = result;
+  const {
+    sentiment,          // Hasil sentimen: 'positive', 'negative', atau 'neutral'
+    sentiment_score,    // Skor keyakinan (confidence score) dari model AI
+    key_points,         // Array poin-poin penting yang diekstrak
+    review_text,        // Teks review asli
+    product_name,       // Nama produk (opsional)
+    analysis_status,    // Status analisis
+    error_message       // Pesan error jika ada
+  } = data || {};
 
-    const getSentimentConfig = () => {
-        switch (sentiment) {
-            case 'positive':
-                return {
-                    icon: <ThumbsUp size={32} />,
-                    label: 'Positive',
-                    color: 'var(--positive)',
-                    bgColor: 'hsla(142, 76%, 46%, 0.15)',
-                    borderColor: 'hsla(142, 76%, 46%, 0.3)',
-                    description: 'This review expresses a positive sentiment about the product.'
-                };
-            case 'negative':
-                return {
-                    icon: <ThumbsDown size={32} />,
-                    label: 'Negative',
-                    color: 'var(--negative)',
-                    bgColor: 'hsla(0, 72%, 51%, 0.15)',
-                    borderColor: 'hsla(0, 72%, 51%, 0.3)',
-                    description: 'This review expresses a negative sentiment about the product.'
-                };
-            default:
-                return {
-                    icon: <Minus size={32} />,
-                    label: 'Neutral',
-                    color: 'var(--neutral)',
-                    bgColor: 'hsla(45, 93%, 55%, 0.15)',
-                    borderColor: 'hsla(45, 93%, 55%, 0.3)',
-                    description: 'This review expresses a neutral or mixed sentiment.'
-                };
-        }
-    };
+  /**
+   * Konfigurasi tampilan berdasarkan sentimen.
+   * Mengembalikan icon, warna, dan deskripsi yang sesuai
+   * dengan hasil analisis sentimen.
+   */
+  const getSentimentConfig = () => {
+    switch (sentiment) {
+      case 'positive':
+        return {
+          icon: <ThumbsUp size={32} />,
+          label: 'Positive',
+          color: 'var(--positive)',
+          bgColor: 'hsla(142, 76%, 46%, 0.15)',
+          borderColor: 'hsla(142, 76%, 46%, 0.3)',
+          description: 'This review expresses a positive sentiment about the product.'
+        };
+      case 'negative':
+        return {
+          icon: <ThumbsDown size={32} />,
+          label: 'Negative',
+          color: 'var(--negative)',
+          bgColor: 'hsla(0, 72%, 51%, 0.15)',
+          borderColor: 'hsla(0, 72%, 51%, 0.3)',
+          description: 'This review expresses a negative sentiment about the product.'
+        };
+      default: // Neutral atau undefined
+        return {
+          icon: <Minus size={32} />,
+          label: 'Neutral',
+          color: 'var(--neutral)',
+          bgColor: 'hsla(45, 93%, 55%, 0.15)',
+          borderColor: 'hsla(45, 93%, 55%, 0.3)',
+          description: 'This review expresses a neutral or mixed sentiment.'
+        };
+    }
+  };
 
-    const sentimentConfig = getSentimentConfig();
+  const sentimentConfig = getSentimentConfig();
 
-    const handleCopy = async () => {
-        const textToCopy = `
+  /**
+   * Fungsi untuk menyalin hasil analisis ke clipboard.
+   * Memformat teks agar rapi saat dipaste.
+   */
+  const handleCopy = async () => {
+    // Format teks yang akan disalin
+    const textToCopy = `
 Sentiment Analysis Result
 =========================
 Sentiment: ${sentimentConfig.label} (${((sentiment_score || 0) * 100).toFixed(0)}% confidence)
@@ -80,106 +93,113 @@ ${review_text}
 ${product_name ? `\nProduct: ${product_name}` : ''}
     `.trim();
 
-        try {
-            await navigator.clipboard.writeText(textToCopy);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
-    };
+    try {
+      // Menggunakan Clipboard API browser
+      await navigator.clipboard.writeText(textToCopy);
 
-    return (
-        <StyledWrapper $sentiment={sentiment}>
-            <div className="result">
-                <div className="result__border" />
+      // Ubah status tombol menjadi "Copied!" selama 2 detik
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
-                {/* Header */}
-                <div className="result_header">
-                    <h2 className="result_title">
-                        <Sparkles size={20} />
-                        Analysis Complete
-                    </h2>
-                    <div className="header_actions">
-                        <button className="copy_button" onClick={handleCopy}>
-                            {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
-                            {copied ? 'Copied!' : 'Copy'}
-                        </button>
-                    </div>
-                </div>
+  return (
+    // StyledWrapper menerima prop $sentiment untuk mengatur tema warna background
+    <StyledWrapper $sentiment={sentiment}>
+      <div className="result">
+        {/* Elemen dekoratif border gradient */}
+        <div className="result__border" />
 
-                <hr className="line" />
+        {/* Header Bagian Hasil Analisis */}
+        <div className="result_header">
+          <h2 className="result_title">
+            <Sparkles size={20} />
+            Analysis Complete
+          </h2>
+          <div className="header_actions">
+            <button className="copy_button" onClick={handleCopy}>
+              {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+        </div>
 
-                {/* Error Display */}
-                {error_message && (
-                    <div className="error_banner">
-                        <AlertTriangle size={18} />
-                        <div>
-                            <strong>Partial Analysis</strong>
-                            <p>{error_message}</p>
-                        </div>
-                    </div>
-                )}
+        <hr className="line" />
 
-                {/* Sentiment Section */}
-                <div
-                    className="sentiment_card"
-                    style={{
-                        '--sentiment-color': sentimentConfig.color,
-                        '--sentiment-bg': sentimentConfig.bgColor,
-                        '--sentiment-border': sentimentConfig.borderColor
-                    }}
-                >
-                    <div className="sentiment_icon">
-                        {sentimentConfig.icon}
-                    </div>
-                    <div className="sentiment_info">
-                        <h3 className="sentiment_label">{sentimentConfig.label}</h3>
-                        <p className="sentiment_description">{sentimentConfig.description}</p>
-                    </div>
-                    <div className="sentiment_score">
-                        <span className="score_value">{((sentiment_score || 0) * 100).toFixed(0)}%</span>
-                        <span className="score_label">Confidence</span>
-                    </div>
-                </div>
-
-                {/* Key Points Section */}
-                {key_points && key_points.length > 0 && (
-                    <div className="key_points_section">
-                        <h3 className="section_title">
-                            <Sparkles size={16} />
-                            Key Points Extracted
-                        </h3>
-                        <ul className="key_points_list">
-                            {key_points.map((point, index) => (
-                                <li key={index} className="key_point_item">
-                                    <span className="point_number">{index + 1}</span>
-                                    <span className="point_text">{point}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* Original Review */}
-                <div className="original_review">
-                    <h4 className="review_label">Original Review</h4>
-                    {product_name && (
-                        <span className="product_tag">{product_name}</span>
-                    )}
-                    <p className="review_text">{review_text}</p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="action_buttons">
-                    <button className="button_primary" onClick={onNewAnalysis}>
-                        <Sparkles size={16} />
-                        Analyze Another Review
-                    </button>
-                </div>
+        {/* Tampilan Error Jika Analisis Sebagian Gagal */}
+        {error_message && (
+          <div className="error_banner">
+            <AlertTriangle size={18} />
+            <div>
+              <strong>Partial Analysis</strong>
+              <p>{error_message}</p>
             </div>
-        </StyledWrapper>
-    );
+          </div>
+        )}
+
+        {/* Kartu Sentimen Utama */}
+        <div
+          className="sentiment_card"
+          style={{
+            // Custom properties CSS (variables) untuk pewarnaan dinamis
+            '--sentiment-color': sentimentConfig.color,
+            '--sentiment-bg': sentimentConfig.bgColor,
+            '--sentiment-border': sentimentConfig.borderColor
+          }}
+        >
+          <div className="sentiment_icon">
+            {sentimentConfig.icon}
+          </div>
+          <div className="sentiment_info">
+            <h3 className="sentiment_label">{sentimentConfig.label}</h3>
+            <p className="sentiment_description">{sentimentConfig.description}</p>
+          </div>
+          <div className="sentiment_score">
+            {/* Menampilkan persentase skor keyakinan */}
+            <span className="score_value">{((sentiment_score || 0) * 100).toFixed(0)}%</span>
+            <span className="score_label">Confidence</span>
+          </div>
+        </div>
+
+        {/* Bagian Poin Penting (Hanya tampil jika ada key_points) */}
+        {key_points && key_points.length > 0 && (
+          <div className="key_points_section">
+            <h3 className="section_title">
+              <Sparkles size={16} />
+              Key Points Extracted
+            </h3>
+            <ul className="key_points_list">
+              {key_points.map((point, index) => (
+                <li key={index} className="key_point_item">
+                  <span className="point_number">{index + 1}</span>
+                  <span className="point_text">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Menampilkan Review Asli */}
+        <div className="original_review">
+          <h4 className="review_label">Original Review</h4>
+          {product_name && (
+            <span className="product_tag">{product_name}</span>
+          )}
+          <p className="review_text">{review_text}</p>
+        </div>
+
+        {/* Tombol Aksi Bawah */}
+        <div className="action_buttons">
+          <button className="button_primary" onClick={onNewAnalysis}>
+            <Sparkles size={16} />
+            Analyze Another Review
+          </button>
+        </div>
+      </div>
+    </StyledWrapper>
+  );
 };
 
 const StyledWrapper = styled.div`
@@ -220,20 +240,20 @@ const StyledWrapper = styled.div`
       radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
       radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
       radial-gradient(at 0% 64%, ${props =>
-        props.$sentiment === 'positive' ? 'hsl(142, 70%, 26%)' :
-            props.$sentiment === 'negative' ? 'hsl(0, 70%, 26%)' :
-                'hsl(189, 99%, 26%)'
-    } 0px, transparent 85%),
+    props.$sentiment === 'positive' ? 'hsl(142, 70%, 26%)' :
+      props.$sentiment === 'negative' ? 'hsl(0, 70%, 26%)' :
+        'hsl(189, 99%, 26%)'
+  } 0px, transparent 85%),
       radial-gradient(at 41% 94%, ${props =>
-        props.$sentiment === 'positive' ? 'hsl(142, 70%, 36%)' :
-            props.$sentiment === 'negative' ? 'hsl(0, 70%, 36%)' :
-                'hsl(189, 97%, 36%)'
-    } 0px, transparent 85%),
+    props.$sentiment === 'positive' ? 'hsl(142, 70%, 36%)' :
+      props.$sentiment === 'negative' ? 'hsl(0, 70%, 36%)' :
+        'hsl(189, 97%, 36%)'
+  } 0px, transparent 85%),
       radial-gradient(at 100% 99%, ${props =>
-        props.$sentiment === 'positive' ? 'hsl(142, 70%, 13%)' :
-            props.$sentiment === 'negative' ? 'hsl(0, 70%, 13%)' :
-                'hsl(188, 94%, 13%)'
-    } 0px, transparent 85%);
+    props.$sentiment === 'positive' ? 'hsl(142, 70%, 13%)' :
+      props.$sentiment === 'negative' ? 'hsl(0, 70%, 13%)' :
+        'hsl(188, 94%, 13%)'
+  } 0px, transparent 85%);
 
     border-radius: 1rem;
     box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
@@ -272,15 +292,15 @@ const StyledWrapper = styled.div`
       0deg,
       hsla(0, 0%, 100%, 0) 0%,
       ${props =>
-        props.$sentiment === 'positive' ? 'hsl(142, 100%, 50%)' :
-            props.$sentiment === 'negative' ? 'hsl(0, 100%, 50%)' :
-                'hsl(189, 100%, 50%)'
-    } 40%,
+    props.$sentiment === 'positive' ? 'hsl(142, 100%, 50%)' :
+      props.$sentiment === 'negative' ? 'hsl(0, 100%, 50%)' :
+        'hsl(189, 100%, 50%)'
+  } 40%,
       ${props =>
-        props.$sentiment === 'positive' ? 'hsl(142, 100%, 50%)' :
-            props.$sentiment === 'negative' ? 'hsl(0, 100%, 50%)' :
-                'hsl(189, 100%, 50%)'
-    } 60%,
+    props.$sentiment === 'positive' ? 'hsl(142, 100%, 50%)' :
+      props.$sentiment === 'negative' ? 'hsl(0, 100%, 50%)' :
+        'hsl(189, 100%, 50%)'
+  } 60%,
       hsla(0, 0%, 40%, 0) 100%
     );
     animation: rotate 8s linear infinite;

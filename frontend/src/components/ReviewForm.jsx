@@ -2,15 +2,36 @@
  * Review Form Component
  * Form for submitting reviews for analysis
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Send, Package, FileText, Sparkles } from 'lucide-react';
+import { Send, Package, FileText, Sparkles, Eraser } from 'lucide-react';
 
-const ReviewForm = ({ onSubmit, isLoading }) => {
+const ReviewForm = ({ onSubmit, isLoading, initialValues }) => {
+  // State untuk menyimpan teks review dan nama produk
   const [reviewText, setReviewText] = useState('');
   const [productName, setProductName] = useState('');
+
+  // State untuk menyimpan pesan error validasi
   const [errors, setErrors] = useState({});
 
+  /**
+   * Effect untuk mengisi form jika ada data awal (misal saat edit).
+   * Dijalankan setiap kali `initialValues` berubah.
+   */
+  useEffect(() => {
+    if (initialValues) {
+      setReviewText(initialValues.review_text || '');
+      setProductName(initialValues.product_name || '');
+    } else {
+      setReviewText('');
+      setProductName('');
+    }
+  }, [initialValues]);
+
+  /**
+   * Fungsi validasi form sebelum submit.
+   * Mengecek apakah review kosong atau terlalu pendek/panjang.
+   */
   const validateForm = () => {
     const newErrors = {};
 
@@ -23,26 +44,36 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
     }
 
     setErrors(newErrors);
+    // Mengembalikan true jika tidak ada error
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Handler saat form disubmit.
+   * Mencegah reload halaman default dan memanggil fungsi `onSubmit` dari parent.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
+    // Kirim data ke parent component
     onSubmit({
       review_text: reviewText.trim(),
       product_name: productName.trim() || null
     });
   };
 
+  /**
+   * Mereset form ke kondisi awal (kosong).
+   */
   const handleClear = () => {
     setReviewText('');
     setProductName('');
     setErrors({});
   };
 
+  // Menghitung jumlah karakter saat ini untuk ditampilkan
   const characterCount = reviewText.length;
   const maxCharacters = 5000;
 
@@ -61,7 +92,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
 
         <hr className="line" />
 
-        {/* Product Name Input */}
+        {/* Input Nama Produk (Opsional) */}
         <div className="input_group">
           <label className="input_label">
             <Package size={14} />
@@ -78,7 +109,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
           />
         </div>
 
-        {/* Review Text Input */}
+        {/* Input Teks Review (Wajib) */}
         <div className="input_group">
           <label className="input_label">
             <FileText size={14} />
@@ -90,6 +121,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
             value={reviewText}
             onChange={(e) => {
               setReviewText(e.target.value);
+              // Hapus error saat user mulai mengetik ulang
               if (errors.reviewText) {
                 setErrors({ ...errors, reviewText: null });
               }
@@ -107,7 +139,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Tombol Aksi (Clear & Analyze) */}
         <div className="button_group">
           <button
             type="button"
@@ -115,6 +147,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
             onClick={handleClear}
             disabled={isLoading || (!reviewText && !productName)}
           >
+            <Eraser size={16} />
             Clear
           </button>
           <button
@@ -142,8 +175,7 @@ const ReviewForm = ({ onSubmit, isLoading }) => {
 
 const StyledWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 
   .form {
     --white: hsl(0, 0%, 100%);

@@ -25,6 +25,7 @@ function App() {
   const [toast, setToast] = useState(null);
   const [view, setView] = useState('form'); // 'form', 'result', 'loading'
   const [apiStatus, setApiStatus] = useState('checking'); // 'checking', 'online', 'offline'
+  const [editingReview, setEditingReview] = useState(null);
 
   // Show toast notification
   const showToast = (message, type = 'info') => {
@@ -92,12 +93,22 @@ function App() {
   // Handle new analysis
   const handleNewAnalysis = () => {
     setCurrentResult(null);
+    setEditingReview(null);
     setView('form');
   };
 
   // Handle filter change
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
+  };
+
+  // Handle edit review
+  const handleEditReview = (review) => {
+    setEditingReview(review);
+    setCurrentResult(null);
+    setView('form');
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handle review deletion
@@ -184,6 +195,7 @@ function App() {
               <ReviewForm
                 onSubmit={handleSubmitReview}
                 isLoading={isAnalyzing}
+                initialValues={editingReview}
               />
             )}
 
@@ -226,6 +238,7 @@ function App() {
               selectedFilter={selectedFilter}
               onFilterChange={handleFilterChange}
               onDeleteReview={handleDeleteReview}
+              onEditReview={handleEditReview}
             />
           </section>
         )}
@@ -403,6 +416,7 @@ const StyledApp = styled.div`
     display: flex;
     justify-content: center;
     min-height: 400px;
+    width: 100%;
   }
 
   .offline_warning {
